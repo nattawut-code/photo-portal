@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#2157d5" />
+    <title>Photo Portal — POC</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar"><a class="brand" href="#home">Photo Portal</a><span class="poc-badge">POC</span><a class="text-button" href="admin.html">ผู้ดูแล</a></header>
+      <section id="home" class="screen active" aria-labelledby="home-title">
+        <p class="eyebrow">รูปกิจกรรมของเรา</p>
+        <h1 id="home-title">หารูปของคุณได้ง่าย ๆ</h1>
+        <p class="lead">เลือกกิจกรรม แล้วถ่ายหรือเลือกรูปใบหน้าหนึ่งรูปเพื่อค้นหา</p>
+        <div id="event-list" class="event-list" aria-live="polite"></div>
+        <aside class="privacy-note"><strong>ความเป็นส่วนตัว:</strong> รูปที่ใช้ค้นหาจะประมวลผลในเบราว์เซอร์บนเครื่องของคุณ และไม่ถูกอัปโหลดโดยหน้านี้</aside>
+      </section>
+
+      <section id="search" class="screen" aria-labelledby="search-title">
+        <button class="back" data-go="home">← เลือกกิจกรรมอื่น</button>
+        <p id="event-label" class="eyebrow"></p>
+        <h1 id="search-title">ค้นหาด้วยรูปหน้า</h1>
+        <p class="lead">ให้เห็นใบหน้าชัดเจน มีเพียงคนเดียว และแสงพอเหมาะ</p>
+        <div class="capture-card">
+          <img id="preview" class="preview hidden" alt="ตัวอย่างรูปที่เลือก" />
+          <div id="preview-empty" class="preview-empty">🙂<br><span>ยังไม่ได้เลือกรูป</span></div>
+          <label class="primary-button" for="photo-input">ถ่าย/เลือกรูป</label>
+          <input id="photo-input" type="file" accept="image/*" capture="user" />
+          <p id="search-status" class="status">โหลดระบบค้นหาครั้งแรกอาจใช้เวลาสักครู่</p>
+        </div>
+        <button id="find-button" class="primary-button full" disabled>ค้นหารูปของฉัน</button>
+        <button id="open-album" class="text-button">เปิดอัลบั้มทั้งหมดใน Google Photos ↗</button>
+      </section>
+
+      <section id="results" class="screen" aria-labelledby="results-title">
+        <button class="back" data-go="search">← ค้นหาใหม่</button>
+        <p id="result-event-label" class="eyebrow"></p>
+        <h1 id="results-title">รูปที่อาจเป็นของคุณ</h1>
+        <p id="result-summary" class="lead"></p>
+        <div id="results-grid" class="results-grid"></div>
+        <button id="results-album" class="primary-button full">เปิดอัลบั้มทั้งหมดใน Google Photos ↗</button>
+        <p class="fine-print">ผลลัพธ์เป็นการจับคู่โดยระบบอัตโนมัติ กรุณาตรวจสอบก่อนแชร์หรือดาวน์โหลด</p>
+      </section>
+
+      <section class="admin-panel">
+        <details>
+          <summary>เครื่องมือ POC: สร้าง Face Index</summary>
+          <p>สำหรับผู้ดูแล: เลือกรูปทดสอบสูงสุด 100 รูป ระบบจะสร้างไฟล์ Index ในเบราว์เซอร์ เพื่อนำไปแทนที่ <code>data/demo-index.json</code> ก่อนเผยแพร่</p>
+          <label class="secondary-button" for="index-input">เลือกรูปทดสอบ</label>
+          <input id="index-input" type="file" accept="image/*" multiple />
+          <button id="build-index" class="secondary-button" disabled>สร้างและดาวน์โหลด Index</button>
+          <p id="index-status" class="status"></p>
+        </details>
+      </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.min.js"></script>
+    <script type="module" src="assets/app.js"></script>
+  </body>
+</html>
