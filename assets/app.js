@@ -2,12 +2,21 @@ const DEFAULT_EVENTS = [{ id: 'science-day-2026', title: 'กิจกรรม�
 let EVENTS = DEFAULT_EVENTS;
 const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model';
 const MY_FACE_KEY = 'photo-portal-my-descriptor';
+// face-api.js descriptor distance: the same person's two photos are typically well under
+// 0.6, different people usually land above it. .75 was letting wrong faces through as
+// "close enough". If this now hides real matches too often, raise it a little (e.g. 0.55)
+// rather than going back toward .75 — that value was producing wrong-person matches.
+const MATCH_THRESHOLD = 0.5;
 let currentEvent, selectedFile, modelsReady = false, myDescriptor = null;
 const $ = (s) => document.querySelector(s);
 const screens = ['home', 'search', 'results'];
 function go(name) { screens.forEach((id) => $(`#${id}`).classList.toggle('active', id === name)); location.hash = name; window.scrollTo(0, 0); }
 function status(text) { $('#search-status').textContent = text; }
-function demoImage(id) { return `https://picsum.photos/seed/photo-portal-${id}/500/500`; }
+// Previously fell back to a random stock photo (picsum.photos) when a match had no
+// thumbnail — that looked like a real matched photo and was misleading (a plant/skyline
+// photo showing up as "your photo"). This neutral placeholder makes it obvious that no
+// preview is available yet; people should use the "เปิดรูปใน Google Photos" link instead.
+const NO_THUMB = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#e7edf8"/><text x="50" y="55" font-size="34" text-anchor="middle">🖼️</text></svg>');
 
 // --- saved face (register once, reuse every visit) ---
 function loadSavedFace() { try { const raw = localStorage.getItem(MY_FACE_KEY); return raw ? JSON.parse(raw) : null; } catch { return null; } }
@@ -42,7 +51,7 @@ function distance(a, b) { let sum = 0; for (let i = 0; i < a.length; i++) sum +=
 async function descriptorFrom(file) { const img = await faceapi.bufferToImage(file); const found = await faceapi.detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: .45 })).withFaceLandmarks().withFaceDescriptor(); return found?.descriptor; }
 
 function matchAgainst(descriptor, faces) {
-  return faces.map(x => ({ ...x, score: distance(descriptor, x.descriptor) })).sort((a, b) => a.score - b.score).filter(x => x.score < .75);
+  return faces.map(x => ({ ...x, score: distance(descriptor, x.descriptor) })).sort((a, b) => a.score - b.score).filter(x => x.score < MATCH_THRESHOLD);
 }
 
 // search within one event only
@@ -95,14 +104,14 @@ function renderResults(payload, isAllEvents) {
       <div class="result-group">
         <h3 class="result-group-title">${event.title}</h3>
         <div class="results-grid">
-          ${matches.map((x, i) => `<a class="result-card" href="${x.url}" target="_blank" rel="noopener"><img src="${x.thumbnail || demoImage(x.photoId)}" alt="รูปผลลัพธ์ ${i + 1}"><span>เปิดรูปใน Google Photos ↗</span></a>`).join('')}
+          ${matches.map((x, i) => `<a class="result-card" href="${x.url}" target="_blank" rel="noopener"><img src="${x.thumbnail || NO_THUMB}" alt="รูปผลลัพธ์ ${i + 1}"><span>เปิดรูปใน Google Photos ↗</span></a>`).join('')}
         </div>
       </div>`).join('');
     $('#results-album').classList.add('hidden');
   } else {
     $('#result-event-label').textContent = currentEvent.title;
     $('#result-summary').textContent = payload.length ? `พบ ${payload.length} รูปที่ใกล้เคียงที่สุดจากชุดทดสอบ` : 'ยังไม่พบรูปที่มั่นใจ — ลองใช้รูปอื่น หรือเปิดอัลบั้มทั้งหมด';
-    $('#results-grid').innerHTML = payload.map((x, i) => `<a class="result-card" href="${x.url}" target="_blank" rel="noopener"><img src="${x.thumbnail || demoImage(x.photoId)}" alt="รูปผลลัพธ์ ${i + 1}"><span>เปิดรูปใน Google Photos ↗</span></a>`).join('');
+    $('#results-grid').innerHTML = payload.map((x, i) => `<a class="result-card" href="${x.url}" target="_blank" rel="noopener"><img src="${x.thumbnail || NO_THUMB}" alt="รูปผลลัพธ์ ${i + 1}"><span>เปิดรูปใน Google Photos ↗</span></a>`).join('');
     $('#results-album').classList.remove('hidden');
     $('#results-album').onclick = () => open(currentEvent.albumUrl, '_blank');
   }
