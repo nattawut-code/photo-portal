@@ -13,13 +13,16 @@
       <section id="home" class="screen active" aria-labelledby="home-title">
         <p class="eyebrow">รูปกิจกรรมของเรา</p>
         <h1 id="home-title">หารูปของคุณได้ง่าย ๆ</h1>
-        <p class="lead">เลือกกิจกรรม แล้วถ่ายหรือเลือกรูปใบหน้าหนึ่งรูปเพื่อค้นหา</p>
+        <p class="lead">ถ่ายรูปใบหน้าครั้งเดียว ค้นเจอรูปตัวเองได้ในทุกกิจกรรม</p>
+        <button id="find-all-button" class="primary-button full">ค้นหารูปของฉันจากทุกกิจกรรม</button>
+        <p id="quick-search" class="fine-print hidden">ระบบจำใบหน้าของคุณไว้แล้ว &middot; <button id="forget-face" class="text-button" style="padding:0;font-size:inherit">ลบและถ่ายใหม่</button></p>
+        <p class="lead" style="margin-top:28px">หรือเลือกดูรูปทีละกิจกรรม</p>
         <div id="event-list" class="event-list" aria-live="polite"></div>
-        <aside class="privacy-note"><strong>ความเป็นส่วนตัว:</strong> รูปที่ใช้ค้นหาจะประมวลผลในเบราว์เซอร์บนเครื่องของคุณ และไม่ถูกอัปโหลดโดยหน้านี้</aside>
+        <aside class="privacy-note"><strong>ความเป็นส่วนตัว:</strong> รูปที่ใช้ค้นหาจะประมวลผลในเบราว์เซอร์บนเครื่องของคุณ และไม่ถูกอัปโหลดโดยหน้านี้ ใบหน้าที่บันทึกไว้เพื่อค้นหาซ้ำก็เก็บอยู่ในเครื่องของคุณเท่านั้น</aside>
       </section>
 
       <section id="search" class="screen" aria-labelledby="search-title">
-        <button class="back" data-go="home">← เลือกกิจกรรมอื่น</button>
+        <button class="back" data-go="home">← กลับหน้าแรก</button>
         <p id="event-label" class="eyebrow"></p>
         <h1 id="search-title">ค้นหาด้วยรูปหน้า</h1>
         <p class="lead">ให้เห็นใบหน้าชัดเจน มีเพียงคนเดียว และแสงพอเหมาะ</p>
@@ -42,17 +45,6 @@
         <div id="results-grid" class="results-grid"></div>
         <button id="results-album" class="primary-button full">เปิดอัลบั้มทั้งหมดใน Google Photos ↗</button>
         <p class="fine-print">ผลลัพธ์เป็นการจับคู่โดยระบบอัตโนมัติ กรุณาตรวจสอบก่อนแชร์หรือดาวน์โหลด</p>
-      </section>
-
-      <section class="admin-panel">
-        <details>
-          <summary>เครื่องมือ POC: สร้าง Face Index</summary>
-          <p>สำหรับผู้ดูแล: เลือกรูปทดสอบสูงสุด 100 รูป ระบบจะสร้างไฟล์ Index ในเบราว์เซอร์ เพื่อนำไปแทนที่ <code>data/demo-index.json</code> ก่อนเผยแพร่</p>
-          <label class="secondary-button" for="index-input">เลือกรูปทดสอบ</label>
-          <input id="index-input" type="file" accept="image/*" multiple />
-          <button id="build-index" class="secondary-button" disabled>สร้างและดาวน์โหลด Index</button>
-          <p id="index-status" class="status"></p>
-        </details>
       </section>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.min.js"></script>
